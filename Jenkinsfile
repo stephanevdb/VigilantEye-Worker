@@ -10,7 +10,7 @@ pipeline {
         stage('Push image') {
             steps {
                 sh 'echo "Pushing"'
-                sh 'docker buildx build --push --platform linux/amd64,linux/arm64 -t stephanevdb/vigilanteye-worker:latest .'
+                sh 'docker buildx build --push --platform linux/amd64 -t stephanevdb/vigilanteye-worker:latest .'
             }
         }
         stage('Deploy') {
