@@ -2,6 +2,7 @@ import random
 import string
 import requests
 
+worker_id =  ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
 ipv4_capable = False
 ipv4_address = None
 ipv6_capable = False
@@ -20,8 +21,8 @@ except requests.exceptions.RequestException as e:
     print("Error getting IPv6 address:", e)
 
 
-worker_id =  ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+
 print("worker_id: ", worker_id)
 print("ipv4_capable: ", ipv4_capable, "| ipv4_address: ", ipv4_address)
 print("ipv6_capable: ", ipv6_capable, "| ipv6_address: ", ipv6_address)
-print("hello, world!")
+
