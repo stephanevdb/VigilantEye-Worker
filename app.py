@@ -34,6 +34,7 @@ print("worker_id: ", worker_id)
 print("ipv4_capable: ", ipv4_capable, "| ipv4_address: ", ipv4_address)
 print("ipv6_capable: ", ipv6_capable, "| ipv6_address: ", ipv6_address)
 print("connect_ip: ", connect_ip)
+print("Waiting for job...")
 
 while True:
     sleep(1)
