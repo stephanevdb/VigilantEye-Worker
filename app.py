@@ -16,7 +16,7 @@ if not master_ip:
     master_ip = '127.0.0.1'
 master_port = os.getenv('MASTER_PORT')
 if not master_port:
-    master_port = 5000
+    master_port = 8666
 
 
 try:
