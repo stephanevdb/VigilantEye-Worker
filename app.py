@@ -12,8 +12,11 @@ ipv6_capable = False
 ipv6_address = None
 
 master_ip = os.getenv('MASTER_IP')
+
 if not master_ip:
     master_ip = '127.0.0.1'
+if ':' in master_ip:
+    master_ip = f'[{master_ip}]'
 master_port = os.getenv('MASTER_PORT')
 if not master_port:
     master_port = 8666
