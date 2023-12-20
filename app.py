@@ -1,10 +1,12 @@
 import random
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 import string
+from werkzeug.utils import secure_filename
 import requests
 import os
 from time import sleep
 
+state = 'idle'
 
 worker_id =  ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
 
@@ -14,7 +16,10 @@ ipv6_capable = False
 ipv6_address = None
 
 app = Flask(__name__)
-
+UPLOAD_PATH = "UPLOADS"
+upload_path = os.path.join(UPLOAD_PATH)
+if not os.path.isdir(upload_path):
+    os.mkdir(upload_path)
 
 master_ip = os.getenv('MASTER_IP')
 
@@ -50,13 +55,34 @@ print("master_ip: ", master_ip, "| master_port: ", master_port)
 
 @app.route('/ping')
 def ping():  
-    return 'pong'
+    output = f"{worker_id},{state}"
+    return output
 
-@app.route('/job')
+@app.route('/upload', methods = ['GET', 'POST'])
+def upload():
+    print("Uploading file...")
+    if request.method == 'POST':
+        f = request.files['file']
+        print(os.path.join(upload_path, secure_filename(f.filename)))
+        f.save(os.path.join(upload_path, secure_filename(f.filename)))
+        print(f"File {f.filename} uploaded successfully")
+        return 'file uploaded successfully'
+    return "upload", 200
+
+@app.route('/job', methods = ['GET', 'POST'])
 def job():
+    state = 'running'
+    print("Job started")
+    print("Running job...")
+    # TODO
+    print("Waiting for job...")
+    state = 'idle'
     return "job"
   
 
+@app.route("/")
+def index():
+    return "I'm a teapot!", 418
 
 try:
     requests.post(f"http://{master_ip}:{master_port}/add_worker", data=init_message)
