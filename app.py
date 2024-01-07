@@ -1,12 +1,16 @@
 import random
 from flask import Flask, request, send_from_directory
 import string
+import subprocess
+import shlex
 from werkzeug.utils import secure_filename
 import requests
+import sys
 import os
 from time import sleep
 
 state = 'idle'
+
 
 worker_id =  ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
 
@@ -51,8 +55,6 @@ print("ipv6_capable: ", ipv6_capable, "| ipv6_address: ", ipv6_address)
 print("master_ip: ", master_ip, "| master_port: ", master_port)
 
 
-
-
 @app.route('/ping')
 def ping():  
     output = f"{worker_id},{state}"
@@ -72,11 +74,29 @@ def upload():
 @app.route('/job', methods = ['GET', 'POST'])
 def job():
     state = 'running'
-    print("Job started")
     print("Running job...")
-    # TODO
+    data = request.data.decode('utf-8')
+    print(data)
+    module = data.split(',')[0]
+    target = data.split(',')[1]
+    ipv4 = data.split(',')[2]
+    ipv6 = data.split(',')[3]
+    #print("Module:", module)
+    print("Target:", target)
+    print("IPv4:", ipv4)
+    print("IPv6:", ipv6)
+    #try:
+    subprocess.run(["pip", "install", "-r", f'{upload_path}/' + f"{module}.txt"])
+    cmd = ["python3", f"{upload_path}/" + f"{module}.py"]
+    cmd += [target, ipv4, ipv6]
+    print(cmd)
+    subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #except subprocess.CalledProcessError as e:
+    print("Error running job:", e)
+    return 'Error running job', 500
     print("Waiting for job...")
     state = 'idle'
+
     return "job"
   
 
