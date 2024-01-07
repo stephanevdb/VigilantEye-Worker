@@ -22,6 +22,9 @@ ipv6_address = None
 app = Flask(__name__)
 UPLOAD_PATH = "UPLOADS"
 upload_path = os.path.join(UPLOAD_PATH)
+OUTPUT_PATH = "OUTPUT"
+output_path = os.path.join(OUTPUT_PATH)
+
 if not os.path.isdir(upload_path):
     os.mkdir(upload_path)
 
@@ -76,23 +79,28 @@ def job():
     state = 'running'
     print("Running job...")
     data = request.data.decode('utf-8')
-    print(data)
+    #print(data)
     module = data.split(',')[0]
     target = data.split(',')[1]
     ipv4 = data.split(',')[2]
     ipv6 = data.split(',')[3]
     #print("Module:", module)
-    print("Target:", target)
-    print("IPv4:", ipv4)
-    print("IPv6:", ipv6)
-    #try:
-    subprocess.run(["pip", "install", "-r", f'{upload_path}/' + f"{module}.txt"])
-    cmd = ["python3", f"{upload_path}/" + f"{module}.py"]
-    cmd += [target, ipv4, ipv6]
-    print(cmd)
-    subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #except subprocess.CalledProcessError as e:
-    print("Error running job:", e)
+    #print("Target:", target)
+    #print("IPv4:", ipv4)
+    #print("IPv6:", ipv6)
+    try:
+        subprocess.run(["pip", "install", "-r", f'{upload_path}/' + f"{module}.txt"])
+        cmd = ["python3", f"{upload_path}/" + f"{module}.py"]
+        cmd += [target, ipv4, ipv6]
+        #print(cmd)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        print(stdout.decode())
+        return stdout.decode()
+
+
+    except subprocess.CalledProcessError as e:
+        print("Error running job:", e)
     return 'Error running job', 500
     print("Waiting for job...")
     state = 'idle'
