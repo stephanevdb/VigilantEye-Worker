@@ -57,6 +57,12 @@ print("ipv4_capable: ", ipv4_capable, "| ipv4_address: ", ipv4_address)
 print("ipv6_capable: ", ipv6_capable, "| ipv6_address: ", ipv6_address)
 print("master_ip: ", master_ip, "| master_port: ", master_port)
 
+def send_output(master_ip, master_port, scan_id, output):
+    try:
+        print(f"Sending output to {master_ip}:{master_port}")
+        requests.post(f"http://{master_ip}:{master_port}/scan_input", data=f"{scan_id},{output}")
+    except requests.exceptions.RequestException as e:
+        print("Error sending output:", e)
 
 @app.route('/ping')
 def ping():  
